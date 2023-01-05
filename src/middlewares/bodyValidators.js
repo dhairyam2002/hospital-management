@@ -7,13 +7,19 @@ function validateString(variable){
 exports.validateBody = async  (req, res, next) => {
     try{
         const body = req.body;
-        console.log(body);
-        console.log('here');
-        console.log(!body.patient_name);
-        if(!body.patient_name || !body.patient_address || !body.patient_email || !body.patient_phone || !body.patient_password){
+
+        if(!body.patient_name || !body.patient_address || !body.patient_email || !body.patient_phone || !body.patient_password || !body.psych_id){
             return res.status(422).json({
                 success: false,
                 message: "Unprocesseble input fields!",
+                data: {}
+            })
+        }
+
+        if(/^-?\d+$/.test(body.psych_id) == false){
+            return res.status(422).json({
+                success: false,
+                message: "psych_id should be number",
                 data: {}
             })
         }
@@ -24,8 +30,7 @@ exports.validateBody = async  (req, res, next) => {
                 data: {}
             })
         }
-        console.log(body);
-        console.log('here');
+
         if(!validator.isEmail(body.patient_email)){
             return res.status(422).json({
                 success: false,
@@ -44,8 +49,7 @@ exports.validateBody = async  (req, res, next) => {
 
         const password = body.patient_password;
         let regex = new RegExp("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,15}$")
-        console.log(regex);
-        console.log(password);
+
         if(!regex.test(password)){
             return res.status(422).json({
                 success: false,
@@ -53,6 +57,8 @@ exports.validateBody = async  (req, res, next) => {
                 data: {}
             })
         }
+
+
         const phone = body.patient_phone;
         regex = new RegExp("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
         console.log(regex.test(phone))
@@ -74,6 +80,7 @@ exports.validateBody = async  (req, res, next) => {
 
         const filename = req.file.filename;
         const ext = filename.split('.').pop();
+
         if(ext !== "jpg" && ext !== "jpeg" && ext !== "png"){
             return res.status(422).json({
                 success: false,

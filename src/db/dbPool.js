@@ -1,25 +1,10 @@
-const mysql = require('mysql');
-const util = require('util');
-const {query} = require("express");
+const {Sequelize} = require('sequelize');
 
 const CONFIG = process.env
 
-const pool = mysql.createPool({
-    connectionLimit: 15,
+const sequelize = new Sequelize(CONFIG.DB_NAME, CONFIG.DB_USER, CONFIG.DB_PASSWORD, {
     host: CONFIG.DB_HOST,
-    user: CONFIG.DB_USER,
-    password: CONFIG.DB_PASSWORD,
-    database: CONFIG.DB_NAME
+    dialect: CONFIG.DB_DIALECT,
 })
 
-
-pool.getConnection((err, connection) => {
-    if(err) console.log(err);
-    else console.log("Database connected");
-
-})
-
-
-pool_query = util.promisify(pool.query);
-
-module.exports = pool_query;
+module.exports = sequelize;
