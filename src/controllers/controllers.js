@@ -48,6 +48,67 @@ const Controllers = {
             })
         }
 
+    },
+
+
+    async getPsychiatrist(req, res, next){
+        try {
+            const hospitalId = req.query.hospitalId;
+
+            if(!hospitalId){
+                return res.status(400).json({
+                    success: false,
+                    message: "Bad request! hospitalId missing in query"
+                })
+            }
+
+            const [hospital, metadatah] = await Services.getHospitals(hospitalId);
+            
+            if(hospital.length === 0){
+                return res.status(204).json({
+                    success: false,
+                    message: "No such hospital entry!"
+                })
+            }
+
+            const [psych, metadatapsych] = await Services.getPsychiatristsByHospitalId(hospitalId);
+
+
+
+            const psychiatrist_details = [];
+            let patients_count = 0;
+
+            for(var i = 0; i < psych.length; i++){
+                const [patients, metadatapat] = await Services.getPatientsByPsych(psych[i].psych_id);
+                patients_count += patients.length;
+                const obj = {
+                    id: psych[i].psych_id,
+                    name: psych[i].psych_name,
+                    patients: patients
+                }
+                
+                psychiatrist_details.push(obj);
+            }
+
+            let response = {
+                hospital_name: hospital[0].name,
+                total_psychiatrists: psych.length,
+                total_patients: patients_count,
+                psychiatrist_details: psychiatrist_details
+            }
+
+
+            return res.status(200).json({
+                success: true,
+                data: response
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            })
+        }
     }
 }
 
