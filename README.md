@@ -1,9 +1,14 @@
 
 # Hospital Management
 
-Clone the repo run following, make sure your current directory contains package.json
+Clone the repository
+```
+git clone https://github.com/dhairyam2002/hospital-management.git
+cd hospital-management
+```
 
 Run following commands
+
 ```bash
 yarn 
 # or
